@@ -3,12 +3,19 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// environment variables
-$host = getenv("DB_HOST");
-$user = getenv("DB_USER");
-$pass = getenv("DB_PASS");
-$db   = getenv("DB_NAME");
-$port = getenv("DB_PORT");
+$url = getenv("MYSQL_URL");
+
+if(!$url){
+    die("MYSQL_URL not set");
+}
+
+$dbparts = parse_url($url);
+
+$host = $dbparts['host'];
+$user = $dbparts['user'];
+$pass = $dbparts['pass'];
+$db   = ltrim($dbparts['path'], '/');
+$port = $dbparts['port'];
 
 $conn = new mysqli($host, $user, $pass, $db, $port);
 
