@@ -1,19 +1,13 @@
-FROM php:8.2-apache
-
-# Fix MPM issue
-RUN a2dismod mpm_event && a2enmod mpm_prefork
+FROM php:8.2-cli
 
 # Install mysqli
 RUN docker-php-ext-install mysqli
 
-# Enable rewrite
-RUN a2enmod rewrite
-
-# Set public folder as root
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
+# Set working directory
+WORKDIR /app
 
 # Copy project
-COPY . /var/www/html/
+COPY . /app
+
+# Start PHP server
+CMD php -S 0.0.0.0:8080 -t public
